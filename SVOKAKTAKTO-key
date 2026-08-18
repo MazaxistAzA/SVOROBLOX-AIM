@@ -169,32 +169,38 @@ function loadScript()
     aimStroke.Thickness = 1
     table.insert(allStrokes, aimStroke)
 
-    local function updateTheme()
-        local theme = themes[currentTheme]
+    local function applyTheme(themeName)
+        currentTheme = themeName
+        local theme = themes[themeName]
+        
+        -- Обновляем основные элементы
         ToggleWindowBtn.BackgroundColor3 = theme.bg
         ToggleWindowBtn.TextColor3 = theme.text
-        MainFrame.BackgroundColor3 = theme.bg
-        Title.TextColor3 = theme.text
-        aimCircle.BackgroundColor3 = theme.main
+        toggleStroke.Color = theme.main
         
+        MainFrame.BackgroundColor3 = theme.bg
+        mainStroke.Color = theme.main
+        
+        Title.TextColor3 = theme.text
+        
+        aimCircle.BackgroundColor3 = theme.main
+        aimStroke.Color = theme.main
+        
+        -- Обновляем ВСЕ текстовые элементы
         for _, element in ipairs(allTextElements) do
-            if element:IsA("TextLabel") or element:IsA("TextButton") then
+            if element:IsA("TextLabel") or element:IsA("TextButton") or element:IsA("TextBox") then
                 element.TextColor3 = theme.text
             end
         end
         
+        -- Обновляем ВСЕ контейнеры
         for _, container in ipairs(allContainers) do
             if container:IsA("Frame") or container:IsA("TextButton") or container:IsA("TextBox") then
-                local colors = {}
-                for _, t in pairs(themes) do
-                    colors[t.container] = true
-                end
-                if colors[container.BackgroundColor3] then
-                    container.BackgroundColor3 = theme.container
-                end
+                container.BackgroundColor3 = theme.container
             end
         end
         
+        -- Обновляем ВСЕ обводки
         for _, stroke in ipairs(allStrokes) do
             stroke.Color = theme.main
         end
@@ -370,8 +376,7 @@ function loadScript()
         Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 5)
         
         btn.MouseButton1Click:Connect(function()
-            currentTheme = themeName
-            updateTheme()
+            applyTheme(themeName)
         end)
     end
 
