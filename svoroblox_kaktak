@@ -76,7 +76,10 @@ local function checkKey()
     local key = KeyInput.Text
     if key == "SVOKAKTAK" then
         KeyCheck:Destroy()
-        loadMainScript()
+        loadMainScript(false)
+    elseif key == "ebysvo228" then
+        KeyCheck:Destroy()
+        loadMainScript(true)
     else
         KeyInput.Text = ""
         KeyInput.PlaceholderText = "Wrong key!"
@@ -90,7 +93,7 @@ KeyInput.FocusLost:Connect(function(enterPressed)
     end
 end)
 
-function loadMainScript()
+function loadMainScript(isVIP)
     for _, v in ipairs(game:GetService("CoreGui"):GetChildren()) do 
         if v.Name == "SvoGui_V17" then 
             v:Destroy() 
@@ -108,9 +111,9 @@ function loadMainScript()
     ToggleWindowBtn.Parent = ScreenGui
     ToggleWindowBtn.Position = UDim2.new(0.02, 0, 0.2, 0)
     ToggleWindowBtn.Size = UDim2.new(0, 70, 0, 45)
-    ToggleWindowBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-    ToggleWindowBtn.Text = "svo"
-    ToggleWindowBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    ToggleWindowBtn.BackgroundColor3 = isVIP and Color3.fromRGB(60, 30, 0) or Color3.fromRGB(45, 45, 45)
+    ToggleWindowBtn.Text = isVIP and "VIP" or "svo"
+    ToggleWindowBtn.TextColor3 = isVIP and Color3.fromRGB(255, 140, 0) or Color3.fromRGB(255, 255, 255)
     ToggleWindowBtn.Font = Enum.Font.Code
     ToggleWindowBtn.TextSize = 18
     ToggleWindowBtn.Draggable = true
@@ -118,12 +121,19 @@ function loadMainScript()
     local ToggleCorner = Instance.new("UICorner")
     ToggleCorner.CornerRadius = UDim.new(0, 10)
     ToggleCorner.Parent = ToggleWindowBtn
+    
+    if isVIP then
+        local ToggleStroke = Instance.new("UIStroke")
+        ToggleStroke.Parent = ToggleWindowBtn
+        ToggleStroke.Color = Color3.fromRGB(180, 70, 0)
+        ToggleStroke.Thickness = 1
+    end
 
     local MainFrame = Instance.new("Frame")
     MainFrame.Parent = ScreenGui
-    MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    MainFrame.BackgroundColor3 = isVIP and Color3.fromRGB(20, 20, 20) or Color3.fromRGB(30, 30, 30)
     MainFrame.Position = UDim2.new(0.02, 0, 0.32, 0)
-    MainFrame.Size = UDim2.new(0, 230, 0, 320)
+    MainFrame.Size = UDim2.new(0, 230, 0, isVIP and 400 or 320)
     MainFrame.Visible = false
     MainFrame.Active = true
     MainFrame.Draggable = true
@@ -131,13 +141,20 @@ function loadMainScript()
     local MainCorner = Instance.new("UICorner")
     MainCorner.CornerRadius = UDim.new(0, 10)
     MainCorner.Parent = MainFrame
+    
+    if isVIP then
+        local MainStroke = Instance.new("UIStroke")
+        MainStroke.Parent = MainFrame
+        MainStroke.Color = Color3.fromRGB(180, 70, 0)
+        MainStroke.Thickness = 1
+    end
 
     local Title = Instance.new("TextLabel")
     Title.Parent = MainFrame
     Title.Size = UDim2.new(1, 0, 0.07, 0)
     Title.BackgroundTransparency = 1
-    Title.Text = "svokaktak v1"
-    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Title.Text = isVIP and "SECRET SVO V1" or "svokaktak v1"
+    Title.TextColor3 = isVIP and Color3.fromRGB(255, 140, 0) or Color3.fromRGB(255, 255, 255)
     Title.TextSize = 14
     Title.Font = Enum.Font.Code
 
@@ -146,7 +163,7 @@ function loadMainScript()
     ScrollingFrame.Position = UDim2.new(0, 0, 0.07, 0)
     ScrollingFrame.Size = UDim2.new(1, 0, 0.85, 0)
     ScrollingFrame.BackgroundTransparency = 1
-    ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 280)
+    ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, isVIP and 350 or 280)
     ScrollingFrame.ScrollBarThickness = 3
 
     local Players = game:GetService("Players")
@@ -154,7 +171,6 @@ function loadMainScript()
     local Camera = workspace.CurrentCamera
     local RunService = game:GetService("RunService")
     local Lighting = game:GetService("Lighting")
-    local UserInputService = game:GetService("UserInputService")
 
     local states = {
         AIM = false,
@@ -167,31 +183,37 @@ function loadMainScript()
     local startTime = tick()
     local frameCount = 0
     local lastFPSUpdate = tick()
-    local draggingSlider = false
 
     local aimCircle = Instance.new("Frame")
     aimCircle.Parent = ScreenGui
     aimCircle.Size = UDim2.new(0, AimSize * 2, 0, AimSize * 2)
     aimCircle.Position = UDim2.new(0.5, -AimSize, 0.5, -AimSize)
-    aimCircle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    aimCircle.BackgroundColor3 = isVIP and Color3.fromRGB(180, 70, 0) or Color3.fromRGB(255, 255, 255)
     aimCircle.BackgroundTransparency = 0.85
     aimCircle.Visible = false
     aimCircle.ZIndex = 10
     Instance.new("UICorner", aimCircle).CornerRadius = UDim.new(1, 0)
     local aimStroke = Instance.new("UIStroke")
     aimStroke.Parent = aimCircle
-    aimStroke.Color = Color3.fromRGB(255, 255, 255)
-    aimStroke.Thickness = 2
+    aimStroke.Color = isVIP and Color3.fromRGB(180, 70, 0) or Color3.fromRGB(255, 255, 255)
+    aimStroke.Thickness = isVIP and 1 or 2
 
     local function createToggle(text, y, key, callback)
         local container = Instance.new("Frame")
         container.Parent = ScrollingFrame
         container.Position = UDim2.new(0.05, 0, 0, y)
         container.Size = UDim2.new(0.9, 0, 0, 35)
-        container.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        container.BackgroundColor3 = isVIP and Color3.fromRGB(25, 25, 25) or Color3.fromRGB(40, 40, 40)
         local corner = Instance.new("UICorner")
         corner.CornerRadius = UDim.new(0, 8)
         corner.Parent = container
+        
+        if isVIP then
+            local containerStroke = Instance.new("UIStroke")
+            containerStroke.Parent = container
+            containerStroke.Color = Color3.fromRGB(180, 70, 0)
+            containerStroke.Thickness = 1
+        end
         
         local label = Instance.new("TextLabel")
         label.Parent = container
@@ -199,7 +221,7 @@ function loadMainScript()
         label.Size = UDim2.new(0.5, 0, 1, 0)
         label.BackgroundTransparency = 1
         label.Text = text
-        label.TextColor3 = Color3.fromRGB(255, 255, 255)
+        label.TextColor3 = isVIP and Color3.fromRGB(255, 140, 0) or Color3.fromRGB(255, 255, 255)
         label.Font = Enum.Font.Code
         label.TextSize = 11
         label.TextXAlignment = Enum.TextXAlignment.Left
@@ -208,7 +230,7 @@ function loadMainScript()
         slider.Parent = container
         slider.Position = UDim2.new(0.65, 0, 0.15, 0)
         slider.Size = UDim2.new(0.3, 0, 0.7, 0)
-        slider.BackgroundColor3 = states[key] and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(60, 60, 60)
+        slider.BackgroundColor3 = states[key] and (isVIP and Color3.fromRGB(180, 70, 0) or Color3.fromRGB(0, 255, 0)) or Color3.fromRGB(60, 60, 60)
         slider.Text = states[key] and "ON" or "OFF"
         slider.TextColor3 = Color3.fromRGB(255, 255, 255)
         slider.Font = Enum.Font.Code
@@ -219,7 +241,7 @@ function loadMainScript()
         
         slider.MouseButton1Click:Connect(function()
             states[key] = not states[key]
-            slider.BackgroundColor3 = states[key] and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(60, 60, 60)
+            slider.BackgroundColor3 = states[key] and (isVIP and Color3.fromRGB(180, 70, 0) or Color3.fromRGB(0, 255, 0)) or Color3.fromRGB(60, 60, 60)
             slider.Text = states[key] and "ON" or "OFF"
             callback(states[key])
         end)
@@ -242,115 +264,185 @@ function loadMainScript()
     AimSizeLabel.Size = UDim2.new(0.9, 0, 0, 20)
     AimSizeLabel.BackgroundTransparency = 1
     AimSizeLabel.Text = "Aim Size: 100"
-    AimSizeLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    AimSizeLabel.TextColor3 = isVIP and Color3.fromRGB(255, 140, 0) or Color3.fromRGB(255, 255, 255)
     AimSizeLabel.Font = Enum.Font.Code
     AimSizeLabel.TextSize = 11
 
-    local SliderContainer = Instance.new("TextButton")
-    SliderContainer.Parent = ScrollingFrame
-    SliderContainer.Position = UDim2.new(0.05, 0, 0, 145)
-    SliderContainer.Size = UDim2.new(0.9, 0, 0, 20)
-    SliderContainer.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    SliderContainer.Text = ""
-    SliderContainer.AutoButtonColor = false
-    local sliderContainerCorner = Instance.new("UICorner")
-    sliderContainerCorner.CornerRadius = UDim.new(0, 10)
-    sliderContainerCorner.Parent = SliderContainer
-
-    local SliderFill = Instance.new("Frame")
-    SliderFill.Parent = SliderContainer
-    SliderFill.Size = UDim2.new(0.2, 0, 1, 0)
-    SliderFill.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
-    SliderFill.ZIndex = 2
-    local sliderFillCorner = Instance.new("UICorner")
-    sliderFillCorner.CornerRadius = UDim.new(0, 10)
-    sliderFillCorner.Parent = SliderFill
-
-    local SliderKnob = Instance.new("Frame")
-    SliderKnob.Parent = SliderContainer
-    SliderKnob.Position = UDim2.new(0.2, -8, 0.5, -8)
-    SliderKnob.Size = UDim2.new(0, 16, 0, 16)
-    SliderKnob.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    SliderKnob.ZIndex = 3
-    local sliderKnobCorner = Instance.new("UICorner")
-    sliderKnobCorner.CornerRadius = UDim.new(1, 0)
-    sliderKnobCorner.Parent = SliderKnob
-
-    local function updateSlider(value)
-        local percent = (value - 50) / 250
-        SliderFill.Size = UDim2.new(percent, 0, 1, 0)
-        SliderKnob.Position = UDim2.new(percent, -8, 0.5, -8)
-        AimSize = value
-        AimSizeLabel.Text = "Aim Size: " .. AimSize
-        aimCircle.Size = UDim2.new(0, AimSize * 2, 0, AimSize * 2)
-        aimCircle.Position = UDim2.new(0.5, -AimSize, 0.5, -AimSize)
+    local AimSizeInput = Instance.new("TextBox")
+    AimSizeInput.Parent = ScrollingFrame
+    AimSizeInput.Position = UDim2.new(0.05, 0, 0, 145)
+    AimSizeInput.Size = UDim2.new(0.9, 0, 0, 30)
+    AimSizeInput.BackgroundColor3 = isVIP and Color3.fromRGB(25, 25, 25) or Color3.fromRGB(40, 40, 40)
+    AimSizeInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+    AimSizeInput.Font = Enum.Font.Code
+    AimSizeInput.TextSize = 12
+    AimSizeInput.PlaceholderText = "Enter size (50-300)"
+    local inputCorner = Instance.new("UICorner")
+    inputCorner.CornerRadius = UDim.new(0, 6)
+    inputCorner.Parent = AimSizeInput
+    
+    if isVIP then
+        local inputStroke = Instance.new("UIStroke")
+        inputStroke.Parent = AimSizeInput
+        inputStroke.Color = Color3.fromRGB(180, 70, 0)
+        inputStroke.Thickness = 1
     end
 
-    local function handleSliderInput(input)
-        local mousePos = input.Position.X
-        local sliderPos = SliderContainer.AbsolutePosition.X
-        local sliderSize = SliderContainer.AbsoluteSize.X
-        local percent = math.clamp((mousePos - sliderPos) / sliderSize, 0, 1)
-        local value = math.floor(50 + percent * 250)
-        updateSlider(value)
-    end
-
-    SliderContainer.MouseButton1Down:Connect(function()
-        draggingSlider = true
-    end)
-
-    SliderContainer.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or 
-           input.UserInputType == Enum.UserInputType.Touch then
-            draggingSlider = true
-            handleSliderInput(input)
+    AimSizeInput.FocusLost:Connect(function(enterPressed)
+        local value = tonumber(AimSizeInput.Text)
+        if value and value >= 50 and value <= 300 then
+            AimSize = value
+            AimSizeLabel.Text = "Aim Size: " .. AimSize
+            aimCircle.Size = UDim2.new(0, AimSize * 2, 0, AimSize * 2)
+            aimCircle.Position = UDim2.new(0.5, -AimSize, 0.5, -AimSize)
         end
-    end)
-
-    UserInputService.InputChanged:Connect(function(input)
-        if draggingSlider and (input.UserInputType == Enum.UserInputType.MouseMovement or 
-                              input.UserInputType == Enum.UserInputType.Touch) then
-            handleSliderInput(input)
-        end
-    end)
-
-    UserInputService.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or 
-           input.UserInputType == Enum.UserInputType.Touch then
-            draggingSlider = false
-        end
+        AimSizeInput.Text = ""
     end)
 
     local IgnoreBtn = Instance.new("TextButton")
     IgnoreBtn.Parent = ScrollingFrame
-    IgnoreBtn.Position = UDim2.new(0.05, 0, 0, 175)
+    IgnoreBtn.Position = UDim2.new(0.05, 0, 0, 185)
     IgnoreBtn.Size = UDim2.new(0.9, 0, 0, 30)
-    IgnoreBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    IgnoreBtn.BackgroundColor3 = isVIP and Color3.fromRGB(25, 25, 25) or Color3.fromRGB(40, 40, 40)
     IgnoreBtn.Text = "Ignore List"
-    IgnoreBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    IgnoreBtn.TextColor3 = isVIP and Color3.fromRGB(255, 140, 0) or Color3.fromRGB(255, 255, 255)
     IgnoreBtn.Font = Enum.Font.Code
     IgnoreBtn.TextSize = 11
     local ignoreCorner = Instance.new("UICorner")
     ignoreCorner.CornerRadius = UDim.new(0, 8)
     ignoreCorner.Parent = IgnoreBtn
+    
+    if isVIP then
+        local ignoreStroke = Instance.new("UIStroke")
+        ignoreStroke.Parent = IgnoreBtn
+        ignoreStroke.Color = Color3.fromRGB(180, 70, 0)
+        ignoreStroke.Thickness = 1
+    end
+
+    -- VIP функции
+    if isVIP then
+        local TeleportBtn = Instance.new("TextButton")
+        TeleportBtn.Parent = ScrollingFrame
+        TeleportBtn.Position = UDim2.new(0.05, 0, 0, 225)
+        TeleportBtn.Size = UDim2.new(0.9, 0, 0, 30)
+        TeleportBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+        TeleportBtn.Text = "Teleport Players"
+        TeleportBtn.TextColor3 = Color3.fromRGB(255, 140, 0)
+        TeleportBtn.Font = Enum.Font.Code
+        TeleportBtn.TextSize = 11
+        local teleportCorner = Instance.new("UICorner")
+        teleportCorner.CornerRadius = UDim.new(0, 8)
+        teleportCorner.Parent = TeleportBtn
+        
+        local teleportStroke = Instance.new("UIStroke")
+        teleportStroke.Parent = TeleportBtn
+        teleportStroke.Color = Color3.fromRGB(180, 70, 0)
+        teleportStroke.Thickness = 1
+        
+        TeleportBtn.MouseButton1Click:Connect(function()
+            local frame = Instance.new("Frame")
+            frame.Parent = ScreenGui
+            frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+            frame.Position = UDim2.new(0.3, 0, 0.2, 0)
+            frame.Size = UDim2.new(0, 200, 0, 250)
+            frame.Active = true
+            frame.Draggable = true
+            frame.ZIndex = 998
+            local corner = Instance.new("UICorner")
+            corner.CornerRadius = UDim.new(0, 10)
+            corner.Parent = frame
+            
+            local stroke = Instance.new("UIStroke")
+            stroke.Parent = frame
+            stroke.Color = Color3.fromRGB(180, 70, 0)
+            stroke.Thickness = 1
+            
+            local list = Instance.new("ScrollingFrame")
+            list.Parent = frame
+            list.Position = UDim2.new(0, 0, 0.1, 0)
+            list.Size = UDim2.new(1, 0, 0.75, 0)
+            list.BackgroundTransparency = 1
+            list.CanvasSize = UDim2.new(0, 0, 0, 0)
+            
+            local closeBtn = Instance.new("TextButton")
+            closeBtn.Parent = frame
+            closeBtn.Position = UDim2.new(0.05, 0, 0.88, 0)
+            closeBtn.Size = UDim2.new(0.9, 0, 0.08, 0)
+            closeBtn.BackgroundColor3 = Color3.fromRGB(180, 70, 0)
+            closeBtn.Text = "Close"
+            closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            closeBtn.Font = Enum.Font.Code
+            closeBtn.TextSize = 12
+            local closeCorner = Instance.new("UICorner")
+            closeCorner.CornerRadius = UDim.new(0, 6)
+            closeCorner.Parent = closeBtn
+            
+            closeBtn.MouseButton1Click:Connect(function()
+                frame:Destroy()
+            end)
+            
+            local function updateList()
+                for _, child in ipairs(list:GetChildren()) do
+                    if child:IsA("TextButton") then
+                        child:Destroy()
+                    end
+                end
+                
+                local yPos = 0
+                for _, player in ipairs(Players:GetPlayers()) do
+                    if player ~= LocalPlayer then
+                        local btn = Instance.new("TextButton")
+                        btn.Parent = list
+                        btn.Position = UDim2.new(0.05, 0, 0, yPos)
+                        btn.Size = UDim2.new(0.9, 0, 0, 25)
+                        btn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+                        btn.Text = player.Name
+                        btn.TextColor3 = Color3.fromRGB(255, 140, 0)
+                        btn.Font = Enum.Font.Code
+                        btn.TextSize = 10
+                        local btnCorner = Instance.new("UICorner")
+                        btnCorner.CornerRadius = UDim.new(0, 5)
+                        btnCorner.Parent = btn
+                        
+                        btn.MouseButton1Click:Connect(function()
+                            if player.Character then
+                                local rootPart = player.Character:FindFirstChild("HumanoidRootPart")
+                                if rootPart then
+                                    local teleportPos = Camera.CFrame + Camera.CFrame.LookVector * 5
+                                    rootPart.CFrame = CFrame.new(teleportPos.Position)
+                                end
+                            end
+                            frame:Destroy()
+                        end)
+                        
+                        yPos = yPos + 28
+                    end
+                end
+                
+                list.CanvasSize = UDim2.new(0, 0, 0, yPos + 28)
+            end
+            
+            updateList()
+        end)
+    end
 
     local TimeLabel = Instance.new("TextLabel")
     TimeLabel.Parent = ScrollingFrame
-    TimeLabel.Position = UDim2.new(0.05, 0, 0, 215)
+    TimeLabel.Position = UDim2.new(0.05, 0, 0, isVIP and 265 or 225)
     TimeLabel.Size = UDim2.new(0.9, 0, 0, 20)
     TimeLabel.BackgroundTransparency = 1
     TimeLabel.Text = "Time: 00:00:00"
-    TimeLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TimeLabel.TextColor3 = isVIP and Color3.fromRGB(255, 140, 0) or Color3.fromRGB(255, 255, 255)
     TimeLabel.Font = Enum.Font.Code
     TimeLabel.TextSize = 10
 
     local FPSLabel = Instance.new("TextLabel")
     FPSLabel.Parent = ScrollingFrame
-    FPSLabel.Position = UDim2.new(0.05, 0, 0, 235)
+    FPSLabel.Position = UDim2.new(0.05, 0, 0, isVIP and 285 or 245)
     FPSLabel.Size = UDim2.new(0.9, 0, 0, 20)
     FPSLabel.BackgroundTransparency = 1
     FPSLabel.Text = "FPS: 60"
-    FPSLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    FPSLabel.TextColor3 = isVIP and Color3.fromRGB(255, 140, 0) or Color3.fromRGB(255, 255, 255)
     FPSLabel.Font = Enum.Font.Code
     FPSLabel.TextSize = 10
 
@@ -358,7 +450,7 @@ function loadMainScript()
     UnloadBtn.Parent = MainFrame
     UnloadBtn.Position = UDim2.new(0.05, 0, 0.92, 0)
     UnloadBtn.Size = UDim2.new(0.9, 0, 0.06, 0)
-    UnloadBtn.BackgroundColor3 = Color3.fromRGB(139, 0, 0)
+    UnloadBtn.BackgroundColor3 = isVIP and Color3.fromRGB(80, 30, 0) or Color3.fromRGB(139, 0, 0)
     UnloadBtn.Text = "UNLOAD"
     UnloadBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     UnloadBtn.Font = Enum.Font.Code
@@ -467,7 +559,7 @@ function loadMainScript()
     local function showIgnoreList()
         local frame = Instance.new("Frame")
         frame.Parent = ScreenGui
-        frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        frame.BackgroundColor3 = isVIP and Color3.fromRGB(20, 20, 20) or Color3.fromRGB(30, 30, 30)
         frame.Position = UDim2.new(0.3, 0, 0.2, 0)
         frame.Size = UDim2.new(0, 200, 0, 250)
         frame.Active = true
@@ -476,6 +568,13 @@ function loadMainScript()
         local corner = Instance.new("UICorner")
         corner.CornerRadius = UDim.new(0, 10)
         corner.Parent = frame
+        
+        if isVIP then
+            local frameStroke = Instance.new("UIStroke")
+            frameStroke.Parent = frame
+            frameStroke.Color = Color3.fromRGB(180, 70, 0)
+            frameStroke.Thickness = 1
+        end
         
         local list = Instance.new("ScrollingFrame")
         list.Parent = frame
