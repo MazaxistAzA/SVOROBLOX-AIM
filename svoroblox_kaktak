@@ -77,7 +77,7 @@ local function checkKey()
     if key == "SVOKAKTAK" then
         KeyCheck:Destroy()
         loadMainScript(false)
-    elseif key == "ebysvo228" then
+    elseif key == "KAKTAKSVO" then
         KeyCheck:Destroy()
         loadMainScript(true)
     else
