@@ -76,10 +76,7 @@ local function checkKey()
     local key = KeyInput.Text
     if key == "SVOKAKTAK" then
         KeyCheck:Destroy()
-        loadMainScript(false)
-    elseif key == "SVO1" then
-        KeyCheck:Destroy()
-        loadMainScript(true)
+        loadMainScript()
     else
         KeyInput.Text = ""
         KeyInput.PlaceholderText = "Wrong key!"
@@ -93,7 +90,7 @@ KeyInput.FocusLost:Connect(function(enterPressed)
     end
 end)
 
-function loadMainScript(secretMode)
+function loadMainScript()
     for _, v in ipairs(game:GetService("CoreGui"):GetChildren()) do 
         if v.Name == "SvoGui_V17" then 
             v:Destroy() 
@@ -107,47 +104,13 @@ function loadMainScript(secretMode)
     ScreenGui.IgnoreGuiInset = true
     ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-    local currentTheme = "orange"
-    local themes = {
-        orange = {
-            main = Color3.fromRGB(180, 70, 0),
-            bright = Color3.fromRGB(255, 140, 0),
-            bg = Color3.fromRGB(20, 20, 20),
-            container = Color3.fromRGB(25, 25, 25)
-        },
-        purple = {
-            main = Color3.fromRGB(120, 0, 200),
-            bright = Color3.fromRGB(180, 80, 255),
-            bg = Color3.fromRGB(15, 5, 25),
-            container = Color3.fromRGB(25, 10, 35)
-        },
-        red = {
-            main = Color3.fromRGB(200, 0, 0),
-            bright = Color3.fromRGB(255, 80, 80),
-            bg = Color3.fromRGB(20, 5, 5),
-            container = Color3.fromRGB(30, 10, 10)
-        },
-        blue = {
-            main = Color3.fromRGB(0, 100, 200),
-            bright = Color3.fromRGB(80, 150, 255),
-            bg = Color3.fromRGB(5, 10, 20),
-            container = Color3.fromRGB(10, 15, 30)
-        },
-        green = {
-            main = Color3.fromRGB(0, 150, 0),
-            bright = Color3.fromRGB(80, 255, 80),
-            bg = Color3.fromRGB(5, 20, 5),
-            container = Color3.fromRGB(10, 30, 10)
-        }
-    }
-
     local ToggleWindowBtn = Instance.new("TextButton")
     ToggleWindowBtn.Parent = ScreenGui
     ToggleWindowBtn.Position = UDim2.new(0.02, 0, 0.2, 0)
     ToggleWindowBtn.Size = UDim2.new(0, 70, 0, 45)
-    ToggleWindowBtn.BackgroundColor3 = secretMode and themes[currentTheme].bg or Color3.fromRGB(45, 45, 45)
-    ToggleWindowBtn.Text = secretMode and "VIP" or "svo"
-    ToggleWindowBtn.TextColor3 = secretMode and themes[currentTheme].bright or Color3.fromRGB(255, 255, 255)
+    ToggleWindowBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    ToggleWindowBtn.Text = "svo"
+    ToggleWindowBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     ToggleWindowBtn.Font = Enum.Font.Code
     ToggleWindowBtn.TextSize = 18
     ToggleWindowBtn.Draggable = true
@@ -155,20 +118,12 @@ function loadMainScript(secretMode)
     local ToggleCorner = Instance.new("UICorner")
     ToggleCorner.CornerRadius = UDim.new(0, 10)
     ToggleCorner.Parent = ToggleWindowBtn
-    
-    local ToggleStroke
-    if secretMode then
-        ToggleStroke = Instance.new("UIStroke")
-        ToggleStroke.Parent = ToggleWindowBtn
-        ToggleStroke.Color = themes[currentTheme].main
-        ToggleStroke.Thickness = 1
-    end
 
     local MainFrame = Instance.new("Frame")
     MainFrame.Parent = ScreenGui
-    MainFrame.BackgroundColor3 = secretMode and themes[currentTheme].bg or Color3.fromRGB(30, 30, 30)
+    MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     MainFrame.Position = UDim2.new(0.02, 0, 0.32, 0)
-    MainFrame.Size = UDim2.new(0, 230, 0, secretMode and 400 or 320)
+    MainFrame.Size = UDim2.new(0, 230, 0, 320)
     MainFrame.Visible = false
     MainFrame.Active = true
     MainFrame.Draggable = true
@@ -176,21 +131,13 @@ function loadMainScript(secretMode)
     local MainCorner = Instance.new("UICorner")
     MainCorner.CornerRadius = UDim.new(0, 10)
     MainCorner.Parent = MainFrame
-    
-    local MainStroke
-    if secretMode then
-        MainStroke = Instance.new("UIStroke")
-        MainStroke.Parent = MainFrame
-        MainStroke.Color = themes[currentTheme].main
-        MainStroke.Thickness = 1
-    end
 
     local Title = Instance.new("TextLabel")
     Title.Parent = MainFrame
     Title.Size = UDim2.new(1, 0, 0.07, 0)
     Title.BackgroundTransparency = 1
-    Title.Text = secretMode and "SECRET SVO V1" or "svokaktak v1"
-    Title.TextColor3 = secretMode and themes[currentTheme].bright or Color3.fromRGB(255, 255, 255)
+    Title.Text = "svokaktak v1"
+    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
     Title.TextSize = 14
     Title.Font = Enum.Font.Code
 
@@ -199,7 +146,7 @@ function loadMainScript(secretMode)
     ScrollingFrame.Position = UDim2.new(0, 0, 0.07, 0)
     ScrollingFrame.Size = UDim2.new(1, 0, 0.85, 0)
     ScrollingFrame.BackgroundTransparency = 1
-    ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, secretMode and 350 or 280)
+    ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 280)
     ScrollingFrame.ScrollBarThickness = 3
 
     local Players = game:GetService("Players")
@@ -226,69 +173,25 @@ function loadMainScript(secretMode)
     aimCircle.Parent = ScreenGui
     aimCircle.Size = UDim2.new(0, AimSize * 2, 0, AimSize * 2)
     aimCircle.Position = UDim2.new(0.5, -AimSize, 0.5, -AimSize)
-    aimCircle.BackgroundColor3 = secretMode and themes[currentTheme].main or Color3.fromRGB(255, 255, 255)
+    aimCircle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     aimCircle.BackgroundTransparency = 0.85
     aimCircle.Visible = false
     aimCircle.ZIndex = 10
     Instance.new("UICorner", aimCircle).CornerRadius = UDim.new(1, 0)
     local aimStroke = Instance.new("UIStroke")
     aimStroke.Parent = aimCircle
-    aimStroke.Color = secretMode and themes[currentTheme].main or Color3.fromRGB(255, 255, 255)
-    aimStroke.Thickness = secretMode and 1 or 2
-
-    local function updateTheme()
-        if not secretMode then return end
-        local theme = themes[currentTheme]
-        ToggleWindowBtn.BackgroundColor3 = theme.bg
-        ToggleWindowBtn.TextColor3 = theme.bright
-        if ToggleStroke then ToggleStroke.Color = theme.main end
-        MainFrame.BackgroundColor3 = theme.bg
-        if MainStroke then MainStroke.Color = theme.main end
-        Title.TextColor3 = theme.bright
-        aimCircle.BackgroundColor3 = theme.main
-        aimStroke.Color = theme.main
-        -- Обновляем все контейнеры
-        for _, child in ipairs(ScrollingFrame:GetDescendants()) do
-            if child:IsA("Frame") and child ~= ScrollingFrame then
-                if child.BackgroundColor3 == themes.orange.container or 
-                   child.BackgroundColor3 == themes.purple.container or
-                   child.BackgroundColor3 == themes.red.container or
-                   child.BackgroundColor3 == themes.blue.container or
-                   child.BackgroundColor3 == themes.green.container then
-                    child.BackgroundColor3 = theme.container
-                end
-            end
-            if child:IsA("UIStroke") then
-                child.Color = theme.main
-            end
-            if child:IsA("TextLabel") or child:IsA("TextButton") then
-                if child.TextColor3 == themes.orange.bright or
-                   child.TextColor3 == themes.purple.bright or
-                   child.TextColor3 == themes.red.bright or
-                   child.TextColor3 == themes.blue.bright or
-                   child.TextColor3 == themes.green.bright then
-                    child.TextColor3 = theme.bright
-                end
-            end
-        end
-    end
+    aimStroke.Color = Color3.fromRGB(255, 255, 255)
+    aimStroke.Thickness = 2
 
     local function createToggle(text, y, key, callback)
         local container = Instance.new("Frame")
         container.Parent = ScrollingFrame
         container.Position = UDim2.new(0.05, 0, 0, y)
         container.Size = UDim2.new(0.9, 0, 0, 35)
-        container.BackgroundColor3 = secretMode and themes[currentTheme].container or Color3.fromRGB(40, 40, 40)
+        container.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
         local corner = Instance.new("UICorner")
         corner.CornerRadius = UDim.new(0, 8)
         corner.Parent = container
-        
-        if secretMode then
-            local containerStroke = Instance.new("UIStroke")
-            containerStroke.Parent = container
-            containerStroke.Color = themes[currentTheme].main
-            containerStroke.Thickness = 1
-        end
         
         local label = Instance.new("TextLabel")
         label.Parent = container
@@ -296,7 +199,7 @@ function loadMainScript(secretMode)
         label.Size = UDim2.new(0.5, 0, 1, 0)
         label.BackgroundTransparency = 1
         label.Text = text
-        label.TextColor3 = secretMode and themes[currentTheme].bright or Color3.fromRGB(255, 255, 255)
+        label.TextColor3 = Color3.fromRGB(255, 255, 255)
         label.Font = Enum.Font.Code
         label.TextSize = 11
         label.TextXAlignment = Enum.TextXAlignment.Left
@@ -305,7 +208,7 @@ function loadMainScript(secretMode)
         slider.Parent = container
         slider.Position = UDim2.new(0.65, 0, 0.15, 0)
         slider.Size = UDim2.new(0.3, 0, 0.7, 0)
-        slider.BackgroundColor3 = states[key] and (secretMode and themes[currentTheme].main or Color3.fromRGB(0, 255, 0)) or Color3.fromRGB(60, 60, 60)
+        slider.BackgroundColor3 = states[key] and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(60, 60, 60)
         slider.Text = states[key] and "ON" or "OFF"
         slider.TextColor3 = Color3.fromRGB(255, 255, 255)
         slider.Font = Enum.Font.Code
@@ -316,7 +219,7 @@ function loadMainScript(secretMode)
         
         slider.MouseButton1Click:Connect(function()
             states[key] = not states[key]
-            slider.BackgroundColor3 = states[key] and (secretMode and themes[currentTheme].main or Color3.fromRGB(0, 255, 0)) or Color3.fromRGB(60, 60, 60)
+            slider.BackgroundColor3 = states[key] and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(60, 60, 60)
             slider.Text = states[key] and "ON" or "OFF"
             callback(states[key])
         end)
@@ -333,14 +236,13 @@ function loadMainScript(secretMode)
         aimCircle.Visible = state
     end)
 
-    -- Ползунок для Aim Size
     local AimSizeLabel = Instance.new("TextLabel")
     AimSizeLabel.Parent = ScrollingFrame
     AimSizeLabel.Position = UDim2.new(0.05, 0, 0, 125)
     AimSizeLabel.Size = UDim2.new(0.9, 0, 0, 20)
     AimSizeLabel.BackgroundTransparency = 1
     AimSizeLabel.Text = "Aim Size: 100"
-    AimSizeLabel.TextColor3 = secretMode and themes[currentTheme].bright or Color3.fromRGB(255, 255, 255)
+    AimSizeLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
     AimSizeLabel.Font = Enum.Font.Code
     AimSizeLabel.TextSize = 11
 
@@ -358,7 +260,7 @@ function loadMainScript(secretMode)
     local SliderFill = Instance.new("Frame")
     SliderFill.Parent = SliderContainer
     SliderFill.Size = UDim2.new(0.2, 0, 1, 0)
-    SliderFill.BackgroundColor3 = secretMode and themes[currentTheme].main or Color3.fromRGB(0, 150, 0)
+    SliderFill.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
     SliderFill.ZIndex = 2
     local sliderFillCorner = Instance.new("UICorner")
     sliderFillCorner.CornerRadius = UDim.new(0, 10)
@@ -398,20 +300,23 @@ function loadMainScript(secretMode)
     end)
 
     SliderContainer.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or 
+           input.UserInputType == Enum.UserInputType.Touch then
             draggingSlider = true
             handleSliderInput(input)
         end
     end)
 
     UserInputService.InputChanged:Connect(function(input)
-        if draggingSlider and input.UserInputType == Enum.UserInputType.MouseMovement then
+        if draggingSlider and (input.UserInputType == Enum.UserInputType.MouseMovement or 
+                              input.UserInputType == Enum.UserInputType.Touch) then
             handleSliderInput(input)
         end
     end)
 
     UserInputService.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or 
+           input.UserInputType == Enum.UserInputType.Touch then
             draggingSlider = false
         end
     end)
@@ -420,30 +325,22 @@ function loadMainScript(secretMode)
     IgnoreBtn.Parent = ScrollingFrame
     IgnoreBtn.Position = UDim2.new(0.05, 0, 0, 175)
     IgnoreBtn.Size = UDim2.new(0.9, 0, 0, 30)
-    IgnoreBtn.BackgroundColor3 = secretMode and themes[currentTheme].container or Color3.fromRGB(40, 40, 40)
+    IgnoreBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     IgnoreBtn.Text = "Ignore List"
-    IgnoreBtn.TextColor3 = secretMode and themes[currentTheme].bright or Color3.fromRGB(255, 255, 255)
+    IgnoreBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     IgnoreBtn.Font = Enum.Font.Code
     IgnoreBtn.TextSize = 11
     local ignoreCorner = Instance.new("UICorner")
     ignoreCorner.CornerRadius = UDim.new(0, 8)
     ignoreCorner.Parent = IgnoreBtn
-    
-    if secretMode then
-        local ignoreStroke = Instance.new("UIStroke")
-        ignoreStroke.Parent = IgnoreBtn
-        ignoreStroke.Color = themes[currentTheme].main
-        ignoreStroke.Thickness = 1
-    end
 
-    -- Время и FPS
     local TimeLabel = Instance.new("TextLabel")
     TimeLabel.Parent = ScrollingFrame
     TimeLabel.Position = UDim2.new(0.05, 0, 0, 215)
     TimeLabel.Size = UDim2.new(0.9, 0, 0, 20)
     TimeLabel.BackgroundTransparency = 1
     TimeLabel.Text = "Time: 00:00:00"
-    TimeLabel.TextColor3 = secretMode and themes[currentTheme].bright or Color3.fromRGB(255, 255, 255)
+    TimeLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
     TimeLabel.Font = Enum.Font.Code
     TimeLabel.TextSize = 10
 
@@ -453,56 +350,15 @@ function loadMainScript(secretMode)
     FPSLabel.Size = UDim2.new(0.9, 0, 0, 20)
     FPSLabel.BackgroundTransparency = 1
     FPSLabel.Text = "FPS: 60"
-    FPSLabel.TextColor3 = secretMode and themes[currentTheme].bright or Color3.fromRGB(255, 255, 255)
+    FPSLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
     FPSLabel.Font = Enum.Font.Code
     FPSLabel.TextSize = 10
-
-    -- Выбор темы (только для VIP)
-    if secretMode then
-        local ThemeLabel = Instance.new("TextLabel")
-        ThemeLabel.Parent = ScrollingFrame
-        ThemeLabel.Position = UDim2.new(0.05, 0, 0, 255)
-        ThemeLabel.Size = UDim2.new(0.9, 0, 0, 20)
-        ThemeLabel.BackgroundTransparency = 1
-        ThemeLabel.Text = "Theme:"
-        ThemeLabel.TextColor3 = themes[currentTheme].bright
-        ThemeLabel.Font = Enum.Font.Code
-        ThemeLabel.TextSize = 11
-
-        local themeButtons = {}
-        local themeNames = {"orange", "purple", "red", "blue", "green"}
-        local themeColors = {
-            orange = Color3.fromRGB(180, 70, 0),
-            purple = Color3.fromRGB(120, 0, 200),
-            red = Color3.fromRGB(200, 0, 0),
-            blue = Color3.fromRGB(0, 100, 200),
-            green = Color3.fromRGB(0, 150, 0)
-        }
-        
-        for i, themeName in ipairs(themeNames) do
-            local btn = Instance.new("TextButton")
-            btn.Parent = ScrollingFrame
-            btn.Position = UDim2.new(0.05 + ((i-1) * 0.18), 0, 0, 275)
-            btn.Size = UDim2.new(0.16, 0, 0, 25)
-            btn.BackgroundColor3 = themeColors[themeName]
-            btn.Text = ""
-            btn.AutoButtonColor = false
-            local btnCorner = Instance.new("UICorner")
-            btnCorner.CornerRadius = UDim.new(0, 5)
-            btnCorner.Parent = btn
-            
-            btn.MouseButton1Click:Connect(function()
-                currentTheme = themeName
-                updateTheme()
-            end)
-        end
-    end
 
     local UnloadBtn = Instance.new("TextButton")
     UnloadBtn.Parent = MainFrame
     UnloadBtn.Position = UDim2.new(0.05, 0, 0.92, 0)
     UnloadBtn.Size = UDim2.new(0.9, 0, 0.06, 0)
-    UnloadBtn.BackgroundColor3 = secretMode and themes[currentTheme].main or Color3.fromRGB(139, 0, 0)
+    UnloadBtn.BackgroundColor3 = Color3.fromRGB(139, 0, 0)
     UnloadBtn.Text = "UNLOAD"
     UnloadBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     UnloadBtn.Font = Enum.Font.Code
@@ -611,7 +467,7 @@ function loadMainScript(secretMode)
     local function showIgnoreList()
         local frame = Instance.new("Frame")
         frame.Parent = ScreenGui
-        frame.BackgroundColor3 = secretMode and themes[currentTheme].bg or Color3.fromRGB(30, 30, 30)
+        frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
         frame.Position = UDim2.new(0.3, 0, 0.2, 0)
         frame.Size = UDim2.new(0, 200, 0, 250)
         frame.Active = true
@@ -620,13 +476,6 @@ function loadMainScript(secretMode)
         local corner = Instance.new("UICorner")
         corner.CornerRadius = UDim.new(0, 10)
         corner.Parent = frame
-        
-        if secretMode then
-            local frameStroke = Instance.new("UIStroke")
-            frameStroke.Parent = frame
-            frameStroke.Color = themes[currentTheme].main
-            frameStroke.Thickness = 1
-        end
         
         local list = Instance.new("ScrollingFrame")
         list.Parent = frame
@@ -666,7 +515,7 @@ function loadMainScript(secretMode)
                     btn.Parent = list
                     btn.Position = UDim2.new(0.05, 0, 0, yPos)
                     btn.Size = UDim2.new(0.9, 0, 0, 25)
-                    btn.BackgroundColor3 = IgnoreList[player.UserId] and themes[currentTheme].main or Color3.fromRGB(60, 60, 60)
+                    btn.BackgroundColor3 = IgnoreList[player.UserId] and Color3.fromRGB(180, 70, 0) or Color3.fromRGB(60, 60, 60)
                     btn.Text = player.Name .. (IgnoreList[player.UserId] and " [IG]" or "")
                     btn.TextColor3 = Color3.fromRGB(255, 255, 255)
                     btn.Font = Enum.Font.Code
@@ -715,15 +564,6 @@ function loadMainScript(secretMode)
     RunService.RenderStepped:Connect(function()
         frameCount = frameCount + 1
         doAimbot()
-        
-        -- Удаление неба
-        if secretMode then
-            for _, v in ipairs(workspace:GetDescendants()) do
-                if v:IsA("Sky") then
-                    v.Parent = nil
-                end
-            end
-        end
     end)
 
     task.spawn(function()
