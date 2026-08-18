@@ -72,12 +72,18 @@ TelegramButton.MouseButton1Click:Connect(function()
     TelegramButton.Text = "Telegram: @neimozuu"
 end)
 
+-- Зашифрованный ключ
+local function getVIPKey()
+    local parts = {"VIP", "SVO", "MENU"}
+    return table.concat(parts)
+end
+
 local function checkKey()
     local key = KeyInput.Text
     if key == "SVOKAKTAK" then
         KeyCheck:Destroy()
         loadMainScript(false)
-    elseif key == "KAKTAKSVO" then
+    elseif key == getVIPKey() then
         KeyCheck:Destroy()
         loadMainScript(true)
     else
@@ -107,13 +113,57 @@ function loadMainScript(isVIP)
     ScreenGui.IgnoreGuiInset = true
     ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
+    local currentTheme = "orange"
+    local themes = {
+        orange = {
+            main = Color3.fromRGB(180, 70, 0),
+            bright = Color3.fromRGB(255, 140, 0),
+            bg = Color3.fromRGB(20, 20, 20),
+            container = Color3.fromRGB(25, 25, 25),
+            chamsVisible = Color3.fromRGB(255, 255, 255),
+            chamsInvisible = Color3.fromRGB(255, 100, 0)
+        },
+        purple = {
+            main = Color3.fromRGB(120, 0, 200),
+            bright = Color3.fromRGB(180, 80, 255),
+            bg = Color3.fromRGB(15, 5, 25),
+            container = Color3.fromRGB(25, 10, 35),
+            chamsVisible = Color3.fromRGB(255, 255, 255),
+            chamsInvisible = Color3.fromRGB(120, 0, 200)
+        },
+        red = {
+            main = Color3.fromRGB(200, 0, 0),
+            bright = Color3.fromRGB(255, 80, 80),
+            bg = Color3.fromRGB(20, 5, 5),
+            container = Color3.fromRGB(30, 10, 10),
+            chamsVisible = Color3.fromRGB(255, 255, 255),
+            chamsInvisible = Color3.fromRGB(200, 0, 0)
+        },
+        blue = {
+            main = Color3.fromRGB(0, 100, 200),
+            bright = Color3.fromRGB(80, 150, 255),
+            bg = Color3.fromRGB(5, 10, 20),
+            container = Color3.fromRGB(10, 15, 30),
+            chamsVisible = Color3.fromRGB(255, 255, 255),
+            chamsInvisible = Color3.fromRGB(0, 100, 200)
+        },
+        pink = {
+            main = Color3.fromRGB(200, 0, 150),
+            bright = Color3.fromRGB(255, 80, 200),
+            bg = Color3.fromRGB(20, 5, 15),
+            container = Color3.fromRGB(30, 10, 25),
+            chamsVisible = Color3.fromRGB(255, 255, 255),
+            chamsInvisible = Color3.fromRGB(200, 0, 150)
+        }
+    }
+
     local ToggleWindowBtn = Instance.new("TextButton")
     ToggleWindowBtn.Parent = ScreenGui
     ToggleWindowBtn.Position = UDim2.new(0.02, 0, 0.2, 0)
     ToggleWindowBtn.Size = UDim2.new(0, 70, 0, 45)
-    ToggleWindowBtn.BackgroundColor3 = isVIP and Color3.fromRGB(60, 30, 0) or Color3.fromRGB(45, 45, 45)
+    ToggleWindowBtn.BackgroundColor3 = isVIP and themes[currentTheme].bg or Color3.fromRGB(45, 45, 45)
     ToggleWindowBtn.Text = isVIP and "VIP" or "svo"
-    ToggleWindowBtn.TextColor3 = isVIP and Color3.fromRGB(255, 140, 0) or Color3.fromRGB(255, 255, 255)
+    ToggleWindowBtn.TextColor3 = isVIP and themes[currentTheme].bright or Color3.fromRGB(255, 255, 255)
     ToggleWindowBtn.Font = Enum.Font.Code
     ToggleWindowBtn.TextSize = 18
     ToggleWindowBtn.Draggable = true
@@ -122,18 +172,19 @@ function loadMainScript(isVIP)
     ToggleCorner.CornerRadius = UDim.new(0, 10)
     ToggleCorner.Parent = ToggleWindowBtn
     
+    local ToggleStroke
     if isVIP then
-        local ToggleStroke = Instance.new("UIStroke")
+        ToggleStroke = Instance.new("UIStroke")
         ToggleStroke.Parent = ToggleWindowBtn
-        ToggleStroke.Color = Color3.fromRGB(180, 70, 0)
+        ToggleStroke.Color = themes[currentTheme].main
         ToggleStroke.Thickness = 1
     end
 
     local MainFrame = Instance.new("Frame")
     MainFrame.Parent = ScreenGui
-    MainFrame.BackgroundColor3 = isVIP and Color3.fromRGB(20, 20, 20) or Color3.fromRGB(30, 30, 30)
+    MainFrame.BackgroundColor3 = isVIP and themes[currentTheme].bg or Color3.fromRGB(30, 30, 30)
     MainFrame.Position = UDim2.new(0.02, 0, 0.32, 0)
-    MainFrame.Size = UDim2.new(0, 230, 0, isVIP and 400 or 320)
+    MainFrame.Size = UDim2.new(0, 230, 0, isVIP and 450 or 320)
     MainFrame.Visible = false
     MainFrame.Active = true
     MainFrame.Draggable = true
@@ -142,10 +193,11 @@ function loadMainScript(isVIP)
     MainCorner.CornerRadius = UDim.new(0, 10)
     MainCorner.Parent = MainFrame
     
+    local MainStroke
     if isVIP then
-        local MainStroke = Instance.new("UIStroke")
+        MainStroke = Instance.new("UIStroke")
         MainStroke.Parent = MainFrame
-        MainStroke.Color = Color3.fromRGB(180, 70, 0)
+        MainStroke.Color = themes[currentTheme].main
         MainStroke.Thickness = 1
     end
 
@@ -154,7 +206,7 @@ function loadMainScript(isVIP)
     Title.Size = UDim2.new(1, 0, 0.07, 0)
     Title.BackgroundTransparency = 1
     Title.Text = isVIP and "SECRET SVO V1" or "svokaktak v1"
-    Title.TextColor3 = isVIP and Color3.fromRGB(255, 140, 0) or Color3.fromRGB(255, 255, 255)
+    Title.TextColor3 = isVIP and themes[currentTheme].bright or Color3.fromRGB(255, 255, 255)
     Title.TextSize = 14
     Title.Font = Enum.Font.Code
 
@@ -163,7 +215,7 @@ function loadMainScript(isVIP)
     ScrollingFrame.Position = UDim2.new(0, 0, 0.07, 0)
     ScrollingFrame.Size = UDim2.new(1, 0, 0.85, 0)
     ScrollingFrame.BackgroundTransparency = 1
-    ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, isVIP and 350 or 280)
+    ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, isVIP and 400 or 280)
     ScrollingFrame.ScrollBarThickness = 3
 
     local Players = game:GetService("Players")
@@ -179,6 +231,7 @@ function loadMainScript(isVIP)
     }
     local AimSize = 100
     local IgnoreList = {}
+    local TeleportList = {}
     local cachedPlrs = {}
     local startTime = tick()
     local frameCount = 0
@@ -188,22 +241,35 @@ function loadMainScript(isVIP)
     aimCircle.Parent = ScreenGui
     aimCircle.Size = UDim2.new(0, AimSize * 2, 0, AimSize * 2)
     aimCircle.Position = UDim2.new(0.5, -AimSize, 0.5, -AimSize)
-    aimCircle.BackgroundColor3 = isVIP and Color3.fromRGB(180, 70, 0) or Color3.fromRGB(255, 255, 255)
+    aimCircle.BackgroundColor3 = isVIP and themes[currentTheme].main or Color3.fromRGB(255, 255, 255)
     aimCircle.BackgroundTransparency = 0.85
     aimCircle.Visible = false
     aimCircle.ZIndex = 10
     Instance.new("UICorner", aimCircle).CornerRadius = UDim.new(1, 0)
     local aimStroke = Instance.new("UIStroke")
     aimStroke.Parent = aimCircle
-    aimStroke.Color = isVIP and Color3.fromRGB(180, 70, 0) or Color3.fromRGB(255, 255, 255)
+    aimStroke.Color = isVIP and themes[currentTheme].main or Color3.fromRGB(255, 255, 255)
     aimStroke.Thickness = isVIP and 1 or 2
+
+    local function updateTheme()
+        if not isVIP then return end
+        local theme = themes[currentTheme]
+        ToggleWindowBtn.BackgroundColor3 = theme.bg
+        ToggleWindowBtn.TextColor3 = theme.bright
+        if ToggleStroke then ToggleStroke.Color = theme.main end
+        MainFrame.BackgroundColor3 = theme.bg
+        if MainStroke then MainStroke.Color = theme.main end
+        Title.TextColor3 = theme.bright
+        aimCircle.BackgroundColor3 = theme.main
+        aimStroke.Color = theme.main
+    end
 
     local function createToggle(text, y, key, callback)
         local container = Instance.new("Frame")
         container.Parent = ScrollingFrame
         container.Position = UDim2.new(0.05, 0, 0, y)
         container.Size = UDim2.new(0.9, 0, 0, 35)
-        container.BackgroundColor3 = isVIP and Color3.fromRGB(25, 25, 25) or Color3.fromRGB(40, 40, 40)
+        container.BackgroundColor3 = isVIP and themes[currentTheme].container or Color3.fromRGB(40, 40, 40)
         local corner = Instance.new("UICorner")
         corner.CornerRadius = UDim.new(0, 8)
         corner.Parent = container
@@ -211,7 +277,7 @@ function loadMainScript(isVIP)
         if isVIP then
             local containerStroke = Instance.new("UIStroke")
             containerStroke.Parent = container
-            containerStroke.Color = Color3.fromRGB(180, 70, 0)
+            containerStroke.Color = themes[currentTheme].main
             containerStroke.Thickness = 1
         end
         
@@ -221,7 +287,7 @@ function loadMainScript(isVIP)
         label.Size = UDim2.new(0.5, 0, 1, 0)
         label.BackgroundTransparency = 1
         label.Text = text
-        label.TextColor3 = isVIP and Color3.fromRGB(255, 140, 0) or Color3.fromRGB(255, 255, 255)
+        label.TextColor3 = isVIP and themes[currentTheme].bright or Color3.fromRGB(255, 255, 255)
         label.Font = Enum.Font.Code
         label.TextSize = 11
         label.TextXAlignment = Enum.TextXAlignment.Left
@@ -230,7 +296,7 @@ function loadMainScript(isVIP)
         slider.Parent = container
         slider.Position = UDim2.new(0.65, 0, 0.15, 0)
         slider.Size = UDim2.new(0.3, 0, 0.7, 0)
-        slider.BackgroundColor3 = states[key] and (isVIP and Color3.fromRGB(180, 70, 0) or Color3.fromRGB(0, 255, 0)) or Color3.fromRGB(60, 60, 60)
+        slider.BackgroundColor3 = states[key] and (isVIP and themes[currentTheme].main or Color3.fromRGB(0, 255, 0)) or Color3.fromRGB(60, 60, 60)
         slider.Text = states[key] and "ON" or "OFF"
         slider.TextColor3 = Color3.fromRGB(255, 255, 255)
         slider.Font = Enum.Font.Code
@@ -241,7 +307,7 @@ function loadMainScript(isVIP)
         
         slider.MouseButton1Click:Connect(function()
             states[key] = not states[key]
-            slider.BackgroundColor3 = states[key] and (isVIP and Color3.fromRGB(180, 70, 0) or Color3.fromRGB(0, 255, 0)) or Color3.fromRGB(60, 60, 60)
+            slider.BackgroundColor3 = states[key] and (isVIP and themes[currentTheme].main or Color3.fromRGB(0, 255, 0)) or Color3.fromRGB(60, 60, 60)
             slider.Text = states[key] and "ON" or "OFF"
             callback(states[key])
         end)
@@ -264,7 +330,7 @@ function loadMainScript(isVIP)
     AimSizeLabel.Size = UDim2.new(0.9, 0, 0, 20)
     AimSizeLabel.BackgroundTransparency = 1
     AimSizeLabel.Text = "Aim Size: 100"
-    AimSizeLabel.TextColor3 = isVIP and Color3.fromRGB(255, 140, 0) or Color3.fromRGB(255, 255, 255)
+    AimSizeLabel.TextColor3 = isVIP and themes[currentTheme].bright or Color3.fromRGB(255, 255, 255)
     AimSizeLabel.Font = Enum.Font.Code
     AimSizeLabel.TextSize = 11
 
@@ -272,7 +338,7 @@ function loadMainScript(isVIP)
     AimSizeInput.Parent = ScrollingFrame
     AimSizeInput.Position = UDim2.new(0.05, 0, 0, 145)
     AimSizeInput.Size = UDim2.new(0.9, 0, 0, 30)
-    AimSizeInput.BackgroundColor3 = isVIP and Color3.fromRGB(25, 25, 25) or Color3.fromRGB(40, 40, 40)
+    AimSizeInput.BackgroundColor3 = isVIP and themes[currentTheme].container or Color3.fromRGB(40, 40, 40)
     AimSizeInput.TextColor3 = Color3.fromRGB(255, 255, 255)
     AimSizeInput.Font = Enum.Font.Code
     AimSizeInput.TextSize = 12
@@ -284,7 +350,7 @@ function loadMainScript(isVIP)
     if isVIP then
         local inputStroke = Instance.new("UIStroke")
         inputStroke.Parent = AimSizeInput
-        inputStroke.Color = Color3.fromRGB(180, 70, 0)
+        inputStroke.Color = themes[currentTheme].main
         inputStroke.Thickness = 1
     end
 
@@ -303,9 +369,9 @@ function loadMainScript(isVIP)
     IgnoreBtn.Parent = ScrollingFrame
     IgnoreBtn.Position = UDim2.new(0.05, 0, 0, 185)
     IgnoreBtn.Size = UDim2.new(0.9, 0, 0, 30)
-    IgnoreBtn.BackgroundColor3 = isVIP and Color3.fromRGB(25, 25, 25) or Color3.fromRGB(40, 40, 40)
+    IgnoreBtn.BackgroundColor3 = isVIP and themes[currentTheme].container or Color3.fromRGB(40, 40, 40)
     IgnoreBtn.Text = "Ignore List"
-    IgnoreBtn.TextColor3 = isVIP and Color3.fromRGB(255, 140, 0) or Color3.fromRGB(255, 255, 255)
+    IgnoreBtn.TextColor3 = isVIP and themes[currentTheme].bright or Color3.fromRGB(255, 255, 255)
     IgnoreBtn.Font = Enum.Font.Code
     IgnoreBtn.TextSize = 11
     local ignoreCorner = Instance.new("UICorner")
@@ -315,7 +381,7 @@ function loadMainScript(isVIP)
     if isVIP then
         local ignoreStroke = Instance.new("UIStroke")
         ignoreStroke.Parent = IgnoreBtn
-        ignoreStroke.Color = Color3.fromRGB(180, 70, 0)
+        ignoreStroke.Color = themes[currentTheme].main
         ignoreStroke.Thickness = 1
     end
 
@@ -325,9 +391,9 @@ function loadMainScript(isVIP)
         TeleportBtn.Parent = ScrollingFrame
         TeleportBtn.Position = UDim2.new(0.05, 0, 0, 225)
         TeleportBtn.Size = UDim2.new(0.9, 0, 0, 30)
-        TeleportBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-        TeleportBtn.Text = "Teleport Players"
-        TeleportBtn.TextColor3 = Color3.fromRGB(255, 140, 0)
+        TeleportBtn.BackgroundColor3 = themes[currentTheme].container
+        TeleportBtn.Text = "Auto Teleport List"
+        TeleportBtn.TextColor3 = themes[currentTheme].bright
         TeleportBtn.Font = Enum.Font.Code
         TeleportBtn.TextSize = 11
         local teleportCorner = Instance.new("UICorner")
@@ -336,13 +402,13 @@ function loadMainScript(isVIP)
         
         local teleportStroke = Instance.new("UIStroke")
         teleportStroke.Parent = TeleportBtn
-        teleportStroke.Color = Color3.fromRGB(180, 70, 0)
+        teleportStroke.Color = themes[currentTheme].main
         teleportStroke.Thickness = 1
         
         TeleportBtn.MouseButton1Click:Connect(function()
             local frame = Instance.new("Frame")
             frame.Parent = ScreenGui
-            frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+            frame.BackgroundColor3 = themes[currentTheme].bg
             frame.Position = UDim2.new(0.3, 0, 0.2, 0)
             frame.Size = UDim2.new(0, 200, 0, 250)
             frame.Active = true
@@ -354,7 +420,7 @@ function loadMainScript(isVIP)
             
             local stroke = Instance.new("UIStroke")
             stroke.Parent = frame
-            stroke.Color = Color3.fromRGB(180, 70, 0)
+            stroke.Color = themes[currentTheme].main
             stroke.Thickness = 1
             
             local list = Instance.new("ScrollingFrame")
@@ -368,7 +434,7 @@ function loadMainScript(isVIP)
             closeBtn.Parent = frame
             closeBtn.Position = UDim2.new(0.05, 0, 0.88, 0)
             closeBtn.Size = UDim2.new(0.9, 0, 0.08, 0)
-            closeBtn.BackgroundColor3 = Color3.fromRGB(180, 70, 0)
+            closeBtn.BackgroundColor3 = themes[currentTheme].main
             closeBtn.Text = "Close"
             closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
             closeBtn.Font = Enum.Font.Code
@@ -395,9 +461,9 @@ function loadMainScript(isVIP)
                         btn.Parent = list
                         btn.Position = UDim2.new(0.05, 0, 0, yPos)
                         btn.Size = UDim2.new(0.9, 0, 0, 25)
-                        btn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-                        btn.Text = player.Name
-                        btn.TextColor3 = Color3.fromRGB(255, 140, 0)
+                        btn.BackgroundColor3 = TeleportList[player.UserId] and themes[currentTheme].main or themes[currentTheme].container
+                        btn.Text = player.Name .. (TeleportList[player.UserId] and " [TP]" or "")
+                        btn.TextColor3 = themes[currentTheme].bright
                         btn.Font = Enum.Font.Code
                         btn.TextSize = 10
                         local btnCorner = Instance.new("UICorner")
@@ -405,14 +471,8 @@ function loadMainScript(isVIP)
                         btnCorner.Parent = btn
                         
                         btn.MouseButton1Click:Connect(function()
-                            if player.Character then
-                                local rootPart = player.Character:FindFirstChild("HumanoidRootPart")
-                                if rootPart then
-                                    local teleportPos = Camera.CFrame + Camera.CFrame.LookVector * 5
-                                    rootPart.CFrame = CFrame.new(teleportPos.Position)
-                                end
-                            end
-                            frame:Destroy()
+                            TeleportList[player.UserId] = not TeleportList[player.UserId]
+                            updateList()
                         end)
                         
                         yPos = yPos + 28
@@ -424,25 +484,63 @@ function loadMainScript(isVIP)
             
             updateList()
         end)
+
+        -- Выбор цвета
+        local ThemeLabel = Instance.new("TextLabel")
+        ThemeLabel.Parent = ScrollingFrame
+        ThemeLabel.Position = UDim2.new(0.05, 0, 0, 265)
+        ThemeLabel.Size = UDim2.new(0.9, 0, 0, 20)
+        ThemeLabel.BackgroundTransparency = 1
+        ThemeLabel.Text = "Theme:"
+        ThemeLabel.TextColor3 = themes[currentTheme].bright
+        ThemeLabel.Font = Enum.Font.Code
+        ThemeLabel.TextSize = 11
+
+        local themeNames = {"orange", "purple", "red", "blue", "pink"}
+        local themeColors = {
+            orange = Color3.fromRGB(180, 70, 0),
+            purple = Color3.fromRGB(120, 0, 200),
+            red = Color3.fromRGB(200, 0, 0),
+            blue = Color3.fromRGB(0, 100, 200),
+            pink = Color3.fromRGB(200, 0, 150)
+        }
+        
+        for i, themeName in ipairs(themeNames) do
+            local btn = Instance.new("TextButton")
+            btn.Parent = ScrollingFrame
+            btn.Position = UDim2.new(0.05 + ((i-1) * 0.18), 0, 0, 285)
+            btn.Size = UDim2.new(0.16, 0, 0, 25)
+            btn.BackgroundColor3 = themeColors[themeName]
+            btn.Text = ""
+            btn.AutoButtonColor = false
+            local btnCorner = Instance.new("UICorner")
+            btnCorner.CornerRadius = UDim.new(0, 5)
+            btnCorner.Parent = btn
+            
+            btn.MouseButton1Click:Connect(function()
+                currentTheme = themeName
+                updateTheme()
+            end)
+        end
     end
 
     local TimeLabel = Instance.new("TextLabel")
     TimeLabel.Parent = ScrollingFrame
-    TimeLabel.Position = UDim2.new(0.05, 0, 0, isVIP and 265 or 225)
+    TimeLabel.Position = UDim2.new(0.05, 0, 0, isVIP and 315 or 225)
     TimeLabel.Size = UDim2.new(0.9, 0, 0, 20)
     TimeLabel.BackgroundTransparency = 1
     TimeLabel.Text = "Time: 00:00:00"
-    TimeLabel.TextColor3 = isVIP and Color3.fromRGB(255, 140, 0) or Color3.fromRGB(255, 255, 255)
+    TimeLabel.TextColor3 = isVIP and themes[currentTheme].bright or Color3.fromRGB(255, 255, 255)
     TimeLabel.Font = Enum.Font.Code
     TimeLabel.TextSize = 10
 
     local FPSLabel = Instance.new("TextLabel")
     FPSLabel.Parent = ScrollingFrame
-    FPSLabel.Position = UDim2.new(0.05, 0, 0, isVIP and 285 or 245)
+    FPSLabel.Position = UDim2.new(0.05, 0, 0, isVIP and 335 or 245)
     FPSLabel.Size = UDim2.new(0.9, 0, 0, 20)
     FPSLabel.BackgroundTransparency = 1
     FPSLabel.Text = "FPS: 60"
-    FPSLabel.TextColor3 = isVIP and Color3.fromRGB(255, 140, 0) or Color3.fromRGB(255, 255, 255)
+    FPSLabel.TextColor3 = isVIP and themes[currentTheme].bright or Color3.fromRGB(255, 255, 255)
     FPSLabel.Font = Enum.Font.Code
     FPSLabel.TextSize = 10
 
@@ -450,7 +548,7 @@ function loadMainScript(isVIP)
     UnloadBtn.Parent = MainFrame
     UnloadBtn.Position = UDim2.new(0.05, 0, 0.92, 0)
     UnloadBtn.Size = UDim2.new(0.9, 0, 0.06, 0)
-    UnloadBtn.BackgroundColor3 = isVIP and Color3.fromRGB(80, 30, 0) or Color3.fromRGB(139, 0, 0)
+    UnloadBtn.BackgroundColor3 = isVIP and themes[currentTheme].main or Color3.fromRGB(139, 0, 0)
     UnloadBtn.Text = "UNLOAD"
     UnloadBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     UnloadBtn.Font = Enum.Font.Code
@@ -527,7 +625,7 @@ function loadMainScript(isVIP)
                 highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
                 highlight.Parent = model
             end
-            highlight.FillColor = isVisible(model) and Color3.fromRGB(255, 100, 0) or Color3.fromRGB(80, 0, 160)
+            highlight.FillColor = isVisible(model) and themes[currentTheme].chamsVisible or themes[currentTheme].chamsInvisible
         end
     end
 
@@ -559,7 +657,7 @@ function loadMainScript(isVIP)
     local function showIgnoreList()
         local frame = Instance.new("Frame")
         frame.Parent = ScreenGui
-        frame.BackgroundColor3 = isVIP and Color3.fromRGB(20, 20, 20) or Color3.fromRGB(30, 30, 30)
+        frame.BackgroundColor3 = isVIP and themes[currentTheme].bg or Color3.fromRGB(30, 30, 30)
         frame.Position = UDim2.new(0.3, 0, 0.2, 0)
         frame.Size = UDim2.new(0, 200, 0, 250)
         frame.Active = true
@@ -572,7 +670,7 @@ function loadMainScript(isVIP)
         if isVIP then
             local frameStroke = Instance.new("UIStroke")
             frameStroke.Parent = frame
-            frameStroke.Color = Color3.fromRGB(180, 70, 0)
+            frameStroke.Color = themes[currentTheme].main
             frameStroke.Thickness = 1
         end
         
@@ -614,7 +712,7 @@ function loadMainScript(isVIP)
                     btn.Parent = list
                     btn.Position = UDim2.new(0.05, 0, 0, yPos)
                     btn.Size = UDim2.new(0.9, 0, 0, 25)
-                    btn.BackgroundColor3 = IgnoreList[player.UserId] and Color3.fromRGB(180, 70, 0) or Color3.fromRGB(60, 60, 60)
+                    btn.BackgroundColor3 = IgnoreList[player.UserId] and themes[currentTheme].main or Color3.fromRGB(60, 60, 60)
                     btn.Text = player.Name .. (IgnoreList[player.UserId] and " [IG]" or "")
                     btn.TextColor3 = Color3.fromRGB(255, 255, 255)
                     btn.Font = Enum.Font.Code
@@ -663,6 +761,22 @@ function loadMainScript(isVIP)
     RunService.RenderStepped:Connect(function()
         frameCount = frameCount + 1
         doAimbot()
+        
+        -- Авто телепорт
+        if isVIP then
+            for userId, enabled in pairs(TeleportList) do
+                if enabled then
+                    local player = Players:GetPlayerByUserId(userId)
+                    if player and player.Character then
+                        local rootPart = player.Character:FindFirstChild("HumanoidRootPart")
+                        if rootPart then
+                            local teleportPos = Camera.CFrame + Camera.CFrame.LookVector * 5
+                            rootPart.CFrame = CFrame.new(teleportPos.Position)
+                        end
+                    end
+                end
+            end
+        end
     end)
 
     task.spawn(function()
